@@ -1,0 +1,116 @@
+select table_name from user_tables;
+
+create table Employee(
+EmpNo char(5) primary key,
+EmpName varchar(20) not null,
+Gender char(1) not null,
+Salary numeric(8,2) not null,
+Address varchar(20) not null,
+DNo char(4),
+check (Gender in ('M', 'F')));
+
+create table Department(
+DeptNo char(4) primary key,
+DeptName varchar(20) unique,
+Location varchar(20));
+
+alter table Employee add foreign key(DNo) references Department(DeptNo);
+
+insert into Department values('1000', 'Computer Science', 'AB5 FF');
+insert into Department values('1001', 'Biomedical Engg', 'AB5 SF');
+insert into Department values('1002', 'Biotechnology', 'AB2 GF');
+
+insert into Employee values('20620', 'Vikranth', 'M', 500000, 'Manipal', '1000');
+insert into Employee values('20621', 'Aashima', 'F', 300000, 'Manipal', '1002');
+insert into Employee values('20622', 'Vaishali', 'F', 600000, 'Manipal', '1001');
+insert into Employee values('20623', 'Anusha', 'F', 500000, 'Manipal', '1000');
+
+insert into Department values('1000', 'Civil Engg', 'AB2 FF');
+
+insert into Employee values('20624', 'Harsh', 'C', 40000, 'Manipal', '1000');
+
+delete from Department
+where DeptNo = '1000';
+
+alter table Employee modify foreign key(DNo) references Department(DeptNo) on delete cascade;
+
+select sysdate from dual;
+
+alter table Employee add(date_of_birth date);
+
+insert into Employee values('20620', 'Vikranth', 'M', 500000, 'Manipal', '1000', '23-SEP-90');
+insert into Employee values('20621', 'Aashima', 'F', 300000, 'Manipal', '1002', '03-MAR-95');
+insert into Employee values('20622', 'Vaishali', 'F', 600000, 'Manipal', '1001', '07-DEC-80');
+insert into Employee values('20623', 'Anusha', 'F', 500000, 'Manipal', '1000', '09-APR-98');
+
+select to_char(date_of_birth, 'dd-mon-yyyy') DOB
+from Employee;
+select to_char(date_of_birth, 'dd-mon-yy') DOB
+from Employee;
+select to_char(date_of_birth, 'dd-mm-yy') DOB
+from Employee;
+
+select EmpName, to_char(date_of_birth, 'YEAR') DOB
+from Employee;
+select EmpName, to_char(date_of_birth, 'Year') DOB
+from Employee;
+select EmpName, to_char(date_of_birth, 'year') DOB
+from Employee;
+
+University Schema
+
+select name, dept_name
+from student;
+
+select *
+from instructor
+where dept_name = 'Comp. Sci.';
+
+
+select title
+from course
+where dept_name = 'Comp. Sci.' and credits = 3;
+
+select takes.course_id, title
+from takes, course
+where takes.ID = '12345' and takes.course_id = course.course_id;
+
+select *
+from instructor
+where salary between 40000 and 90000;
+
+select ID
+from instructor
+where ID not in (select ID from teaches);
+
+select name, title, takes.year
+from student, course, section, takes
+where room_number = '101' and takes.ID = student.ID and takes.sec_id = section.sec_id and takes.course_id = course.course_id and takes.course_id = section.course_id and takes.semester = section.semester and takes.year = section.year;
+
+select name, takes.course_id, title c_name
+from student, takes, course
+where year = 2010 and student.ID = takes.ID and course.course_id = takes.course_id;
+
+select distinct T.name, T.salary inst_salary
+from instructor T, instructor S
+where T.salary > S.salary and S.dept_name = 'Comp. Sci.';
+
+select name
+from instructor
+where dept_name like '%ch%';
+
+select name, length(name) length
+from student;
+
+select dept_name, substr(dept_name, 3, 3) substring
+from department;
+
+select upper(name)
+from instructor;
+
+select NVL(grade, 0) grade
+from takes;
+
+select salary, round(salary/3, -2) rounded
+from instructor;
+

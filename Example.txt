@@ -1,0 +1,72 @@
+create table branch(
+branch_name varchar(20) primary key, 
+branch_city varchar(20), 
+assets number(10));
+
+create table account(
+account_number number(11) primary key, 
+branch_name varchar(20), 
+balance numeric(10, 2), 
+foreign key(branch_name) references branch);
+
+create table customer(
+customer_name varchar(20) primary key,
+customer_street varchar(20),
+customer_city varchar(20));
+
+create table loan(
+loan_number number(10) primary key,
+branch_name varchar(20),
+amount numeric(10, 2),
+foreign key(branch_name) references branch);
+
+create table depositor(
+customer_name varchar(20),
+account_number number(11),
+primary key(customer_name, account_number),
+foreign key(customer_name) references customer,
+foreign key(account_number) references account);
+
+create table borrower(
+customer_name varchar(20),
+loan_number number(10),
+primary key(customer_name, loan_number),
+foreign key(customer_name) references customer,
+foreign key(loan_number) references loan);
+
+insert into branch values('Eshwar Nagar', 'Manipal', 3400000000);
+insert into branch values('Brindavan Nagar', 'Adambakkam', 6700000000);
+
+insert into account values(42333322745, 'Eshwar Nagar', 12000);
+insert into account values(42393322745, 'Brindavan Nagar', 20000);
+insert into account values(63433322745, 'Eshwar Nagar', 120000.50);
+
+insert into customer values('Vaishu', 'Eshwar Nagar', 'Manipal');
+insert into customer values('Renu', 'Mahalakshmi Nagar', 'Chennai');
+insert into customer values('Raghav', 'MV Nagar', 'Manipal');
+
+insert into loan values(1234567890, 'Brindavan Nagar', 500000);
+insert into loan values(1234567891, 'Eshwar Nagar', 200000);
+
+insert into depositor values('Vaishu', 42333322745);
+insert into depositor values('Renu', 42393322745);
+
+insert into borrower values('Raghav', 1234567891);
+insert into borrower values('Raghav', 1234567890);
+
+select *
+from depositor;
+
+select branch_name, assets
+from branch;
+
+select *
+from account
+where account.branch_name = 'Brindavan Nagar';
+
+select *
+from loan
+where loan.amount > 1000;
+
+update branch set assets = 3600000000
+where branch.branch_name = 'Eshwar Nagar';
