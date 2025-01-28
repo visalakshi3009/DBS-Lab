@@ -88,3 +88,11 @@ create view all_courses as
 select course_id, semester, year, building, room_number
 from section
 where course_id in (select course_id from course where dept_name = 'Physics') and semester = 'Fall' and year = '2009';
+
+select *
+from all_courses;
+
+create view department_total_salary(dept_name, total_salary) as
+select dept_name, sum(salary)
+from instructor
+group by dept_name;
