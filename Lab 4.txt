@@ -1,0 +1,139 @@
+1. select course.course_id, count(distinct ID) count
+from takes, course
+where takes.course_id = course.course_id
+group by course.course_id;
+
+2. select dept_name
+from (select dept_name, count(distinct ID) num from student group by dept_name)
+where num > 10;
+
+3.select dept_name, count(distinct course_id) num
+from course
+group by dept_name;
+
+4. select dept_name, avg(salary)
+from instructor
+group by dept_name
+having avg(salary) > 42000;
+
+5. select sec_id, count(distinct ID) num
+from takes
+where semester = 'Spring' and year = '2009'
+group by sec_id;
+
+6. select *
+from prereq
+order by course_id;
+
+7. select *
+from instructor
+order by salary desc;
+
+8. with dept_salary as
+(select dept_name, avg(salary) avg_sal
+from instructor
+group by dept_name)
+select max(avg_sal)
+from dept_salary;
+
+(or)
+
+with dept_salary as
+(select dept_name, sum(salary) tot_sal
+from instructor
+group by dept_name)
+select *
+from dept_salary
+minus
+select T.dept_name, T.tot_sal
+from dept_salary T, dept_salary S
+where T.tot_sal < S.tot_sal;
+
+(or)
+
+select *
+from (select dept_name, sum(salary) tot_sal
+from instructor
+group by dept_name)
+minus
+select T.dept_name, T.tot_sal
+from (select dept_name, sum(salary) tot_sal
+from instructor
+group by dept_name) T,
+(select dept_name, sum(salary) tot_sal
+from instructor
+group by dept_name) S
+where T.tot_sal < S.tot_sal;
+
+9. select dept_name, avg(salary) avg_sal
+from instructor
+group by dept_name
+having avg(salary) > 42000;
+
+10. select *
+from(select sec_id, count(distinct ID) num
+from takes
+where semester = 'Spring' and year = '2010'
+group by sec_id)
+minus
+select T.sec_id, T.num
+from (select sec_id, count(distinct ID) num
+from takes
+where semester = 'Spring' and year = '2010'
+group by sec_id) T,
+(select sec_id, count(distinct ID) num
+from takes
+where semester = 'Spring' and year = '2010'
+group by sec_id) S
+where T.num < S.num;
+
+11. select T.name
+from instructor T
+where not exists((select ID
+from student
+where dept_name = 'Comp. Sci.')
+minus
+(select A.ID
+from takes A, teaches S
+where T.ID = S.ID and A.sec_id = S.sec_id and A.semester = S.semester and A.year = S.year and A.course_id = S.course_id));
+
+12. with dept_avg as
+(select dept_name, avg(salary) avg_sal
+from instructor
+group by dept_name)
+select dept_name, avg_sal
+from dept_avg T
+where avg_sal > 50000 and 5 <= (select count(distinct ID)
+from instructor S
+where T.dept_name = S.dept_name);
+
+13. with max_budget(value) as
+(select max(budget)
+from department)
+select dept_name
+from department, max_budget
+where budget = value;
+
+14. with dept_total as
+(select dept_name, sum(salary) tot_sal
+from instructor
+group by dept_name),
+dept_avg(value) as
+(select avg(tot_sal)
+from dept_total)
+select dept_name
+from dept_total, dept_avg
+where tot_sal > value;
+
+15. insert into department values('IT', 'Taylor', '300000');
+update student set dept_name = 'IT' where dept_name = 'Comp. Sci.';
+rollback;
+
+16. update instructor set salary = case
+when salary <= 100000 then salary * 1.05
+else salary * 1.03
+end;
+rollback;
+commit;
+
+
